@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Daily Checklist</title>
+  <style>
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    #container {
+      height: 100vh;
+      overflow-y: scroll;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>영미의 약 체크시간</h1>
+    <div id="content"></div>
+  </div>
+
+  <script>
+    // Checklist functionality
+    const content = document.getElementById('content');
+
+    const startDate = new Date('2023-04-15');
+    const endDate = new Date('2023-05-10');
+
+    function createChecklist(date) {
+      const checklist = document.createElement('ul');
+      checklist.id = `checklist-${date.toISOString().slice(0, 10)}`;
+
+      for (let i = 1; i <= 6; i++) {
+        const listItem = document.createElement('li');
+        const label = document.createElement('label');
+        label.htmlFor = `item-${date.toISOString().slice(0, 10)}-${i}`;
+        label.innerText = `Item ${i}`;
+        listItem.appendChild(label);
+
+        if (i === 2) {
+          for (let j = 1; j <= 3; j++) {
+            const subListItem = document.createElement('li');
+            listItem.appendChild(subListItem);
+
+            const subCheckbox = document.createElement('input');
+            subCheckbox.type = 'checkbox';
+            subCheckbox.id = `subitem-${date.toISOString().slice(0, 10)}-${i}-${j}`;
+            subListItem.appendChild(subCheckbox);
+
+            const subLabel = document.createElement('label');
+            subLabel.htmlFor = `subitem-${date.toISOString().slice(0, 10)}-${i}-${j}`;
+            subLabel.innerText = `Subitem ${j}`;
+            subListItem.appendChild(subLabel);
+          }
+        } else {
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.id = `item-${date.toISOString().slice(0, 10)}-${i}`;
+          listItem.appendChild(checkbox);
+        }
+
+        checklist.appendChild(listItem);
+      }
+
+      const dateHeader = document.createElement('h2');
+      dateHeader.innerText = date.toDateString();
+      content.appendChild(dateHeader);
+      content.appendChild(checklist);
+    }
+
+    function removeChecklist(date) {
+      const checklist = document.getElementById(`checklist-${date.toISOString().slice(0, 10)}`);
+      if (checklist) {
+        checklist.remove();
+      }
+    }
+
+    function showChecklist(date) {
+      content.innerHTML = '';
+      createChecklist(date);
+    }
+
+    // Date scroll functionality
+    let currentDate = new Date(startDate);
+    showChecklist(currentDate);
+
+    function scrollHandler() {
+      if (content.scrollTop === 0) {
+        currentDate.setDate(currentDate.getDate() + 1);
+        if (currentDate <= endDate) {
+          showChecklist(currentDate);
+        } else {
+          content.scrollTop = 1; // To prevent getting stuck at the top
+        }
+      }
+    }
+
+    content.addEventListener('scroll', scrollHandler);
+  </script>
+</body>
+</html>
